@@ -11,9 +11,16 @@ status.direction = Direction.OUTPUT
 
 led_pins = [
     board.IO21,
-    board.IO26, # type: ignore
+    board.IO26,  # type: ignore
     board.IO47,
-    # do the rest...
+    board.IO33,
+    board.IO34,
+    board.IO48,
+    board.IO35,
+    board.IO36,
+    board.IO37,
+    board.IO38,
+    board.IO39,
 ]
 
 leds = [DigitalInOut(pin) for pin in led_pins]
@@ -21,17 +28,15 @@ leds = [DigitalInOut(pin) for pin in led_pins]
 for led in leds:
     led.direction = Direction.OUTPUT
 
-# main loop
+def update_leds(volume, num_leds):
+    max_volume = 45535  
+    leds_to_light = int((volume / max_volume) * num_leds)
+
+    for i, led in enumerate(leds):
+        led.value = i < leds_to_light
+
+# Main loop
 while True:
     volume = microphone.value
-
-    print(volume)
-
-    leds[0].value = not leds[0].value
-    leds[1].value = not leds[0].value
-
-    sleep(1)
-
-    # instead of blinking,
-    # how can you make the LEDs
-    # turn on like a volume meter?
+    update_leds(volume, len(leds))
+    sleep(0.1)
